@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Assignment 3</title>
+    <script src="https://d3js.org/d3.v7.js"></script>
+    <script src="DataVis1.js"></script>
+    <script src="DataVis2.js"></script>
+    <script src="DataVis3.js"></script>
+    <script src="DataVis4.js"></script>
+    <script src="DataVis5.js"></script>
+    <link rel="stylesheet" href="styles.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body>
+    <nav>
+      <h1>Assignment 3</h1>
+    </nav>
+    <div class="welcomePageContainer" id="welcomeScreen">
+      <p class="welcomeTextBox">
+        Welcome to this experiment! You will be shown different types of graphs
+        with two different sections highlighted in red. Your job is to identify
+        what percent the
+        <b>smaller value</b> is of the <b>larger values</b>. For example,
+        <b
+          >if the larger value is 100 and the smaller is 25, it is 25% of the
+          larger one</b
+        >. Do not try to measure or attempt to be exact, just give your best
+        guess after a brief moment of looking. There are a total of 5 questions.
+        Please be mindful and do not refresh the page as that will result in a
+        restart. Good Luck!
+      </p>
+      <button id="okBtn">Start</button>
+    </div>
+    <div class="endingPageContainer" id="endingScreen">
+      <p class="endingTextBox">
+        Thank you! That was the end of the experiment. We appreciate your
+        participation. Your result is shown in the table below. Please take a
+        screenshot and send it to who shared the link with you.
+      </p>
+      <div class="resultTableContainer">
+        <table border="1" id="resultTable">
+          <tr>
+            <th>Graph Type</th>
+            <th>Your Answer</th>
+            <th>Correct Answer</th>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <div class="iframe-container hidden">
+      <div id="visualization-container"></div>
+      <!-- <iframe id="datavizFrame" src="DataVis1.html" style="width:510px; height:510px;"></iframe> -->
+    </div>
+
+    <div class="button-container hidden">
+      <b1> What percent of the larger value is the smaller value?</b1>
+      <br />
+      <br />
+      <input type="text" id="textEntryBox" placeholder="" value="" />
+      <b1>%</b1>
+      <!-- <button id="prevBtn">Previous</button> -->
+      <button id="nextBtn">Next</button>
+      <br />
+      <br />
+      <b1 id="inputWarning">Value must be an integer between 1 and 100.</b1>
+    </div>
+  </body>
+  <script>
+    let currentIndex = 0;
+    const maxIndex = 5; // Change as further slides are created
+
+    let inputValue = "";
+
+    let guessedValueArray = [];
+    let correctValueArray = [];
+    let graphType = [];
+
+    let numbers = [0, 1, 2, 3, 4];
+
+    // Function to shuffle the array randomly
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    }
+
+    // Shuffle the array
+    shuffleArray(numbers);
+
+    console.log(numbers);
+
+    function renderSlide() {
+      const myDataVizDiv = d3.select("#visualization-container");
+
+      myDataVizDiv.selectAll("*").remove();
+      if (numbers[currentIndex] === 0) {
+        graphType.push("VerticalBar");
+        correctValueArray.push(graphOne());
+      } else if (numbers[currentIndex] === 1) {
+        graphType.push("HorizontalBar");
+        correctValueArray.push(graphTwo());
+      } else if (numbers[currentIndex] === 2) {
+        graphType.push("Line");
+        correctValueArray.push(graphThree());
+      } else if (numbers[currentIndex] === 3) {
+        graphType.push("Pie");
+        correctValueArray.push(graphFour());
+      } else if (numbers[currentIndex] === 4) {
+        graphType.push("TreeMap");
+        correctValueArray.push(graphFive());
+      }
+    }
+
+    document.getElementById("nextBtn").addEventListener("click", () => {
+      if (checkInput(inputValue) && currentIndex === maxIndex - 1) {
+        guessedValueArray.push(inputValue);
+
+        document.getElementById("endingScreen").style.display = "flex"; // Hide welcome screen
+        document.querySelector(".iframe-container").classList.add("hidden"); // Show iframe
+        document.querySelector(".button-container").classList.add("hidden"); // Show buttons
+
+        var table = document.getElementById("resultTable");
+        table.innerHTML = "";
+
+        var headerRow = table.insertRow();
+        headerRow.innerHTML =
+          "<th>Graph Type</th><th>Your Answer</th><th>Correct Answer</th>";
+        for (var i = 0; i < graphType.length; i++) {
+          console.log(graphType.length);
+          console.log(guessedValueArray.length);
+          console.log(graphType.length);
+          var row = table.insertRow();
+          row.innerHTML =
+            "<td>" +
+            graphType[i] +
+            "</td><td>" +
+            guessedValueArray[i] +
+            "</td><td>" +
+            correctValueArray[i] +
+            "</td>";
+        }
+      }
+
+      if (checkInput(inputValue)) {
+        guessedValueArray.push(inputValue);
+        console.log(graphType);
+        console.log(guessedValueArray);
+        console.log(correctValueArray);
+
+        currentIndex++;
+        if (currentIndex == 5) {
+          const order = [
+            "VerticalBar",
+            "HorizontalBar",
+            "Line",
+            "Pie",
+            "TreeMap",
+          ];
+
+          let tempGraphType = [];
+          let tempGuessedValueArray = [];
+          let tempCorrectValueArray = [];
+
+          order.forEach((type) => {
+            const index = graphType.indexOf(type);
+            if (index !== -1) {
+              tempGraphType.push(graphType[index]);
+              tempGuessedValueArray.push(guessedValueArray[index]);
+              tempCorrectValueArray.push(correctValueArray[index]);
+            }
+          });
+
+          graphType = tempGraphType;
+          guessedValueArray = tempGuessedValueArray;
+          correctValueArray = tempCorrectValueArray;
+
+          fetch("http://127.0.0.1:3000/append-data", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ guessedValueArray, correctValueArray }),
+          })
+            .then((response) => response.json())
+            .then((data) => console.log(data))
+            .catch((error) => console.error("Error:", error));
+        }
+        renderSlide();
+        resetTextBox();
+        d3.select("#inputWarning").style("display", "none");
+      } else {
+        d3.select("#inputWarning").style("display", "block");
+      }
+    });
+
+    // document.getElementById("prevBtn").addEventListener("click", () => {
+    //   if (currentIndex > 0) {
+    //     currentIndex--;
+    //     renderSlide();
+    //   }
+    // });
+
+    // Function to perform error checking
+    function checkInput(input) {
+      const value = parseInt(input);
+      if (isNaN(value) || value < 1 || value > 100) {
+        return false;
+      }
+      return true;
+    }
+
+    d3.select("#textEntryBox").on("input", function () {
+      inputValue = +this.value;
+    });
+
+    function resetTextBox() {
+      d3.select("#textEntryBox").property("value", "");
+      inputValue = "";
+    }
+
+    document.getElementById("okBtn").addEventListener("click", () => {
+      document.getElementById("welcomeScreen").style.display = "none"; // Hide welcome screen
+      document.querySelector(".iframe-container").classList.remove("hidden"); // Show iframe
+      document.querySelector(".button-container").classList.remove("hidden"); // Show buttons
+
+      d3.select("#textEntryBox").node().value = "";
+    });
+
+    // Initial rendering
+    renderSlide();
+  </script>
+</html>

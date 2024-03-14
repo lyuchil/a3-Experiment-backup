@@ -1,0 +1,104 @@
+iframe {
+  border: 1px solid black;
+}
+
+.iframe-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 4rem;
+}
+
+.welcomePageContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  margin-top: 14rem;
+}
+
+nav {
+  height: 4rem;
+  width: 100vw;
+  background-color: rgb(190, 77, 77);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+}
+
+.welcomeTextBox {
+  width: 40rem;
+}
+
+h1,
+body {
+  margin: 0;
+}
+
+body {
+  font-family: "Poppins", sans-serif;
+}
+
+.button-container {
+  text-align: center;
+  margin-top: 20px;
+}
+
+button {
+  margin: 0 10px;
+  border: 1px solid black;
+  border-radius: 0.5rem;
+  height: 2.5rem;
+  width: 7rem;
+  background-color: rgb(190, 77, 77);
+  color: white;
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+button:hover {
+  background-color: rgb(197, 84, 84);
+}
+
+.hidden {
+  display: none;
+}
+
+#textEntryBox {
+  width: 20px;
+}
+
+#inputWarning {
+  display: none;
+  color: red;
+}
+
+#visualization-container {
+  width: 510px;
+  height: 510px;
+  border: 1px solid #ccc;
+  background-color: #f0f0f0;
+}
+
+.resultTableContainer {
+  margin: 0 auto;
+  width: 80%;
+  overflow: auto;
+  text-align: center;
+}
+
+#resultTable {
+  width: 100%; /* Ensure the table occupies the full width of its container */
+}
+
+.endingPageContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  margin-top: 14rem;
+  /*display: none;*/
+}
